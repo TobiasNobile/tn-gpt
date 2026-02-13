@@ -1,0 +1,17 @@
+[project]
+name = "tn-gpt"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+requires-python = ">=3.12"
+dependencies = [
+    "chromadb>=1.5.0",
+    "ollama>=0.6.1",
+    "pypdf>=6.7.0",
+    "sentence-transformers>=5.2.2",
+    "streamlit>=1.54.0",
+    "streamlit-mermaid>=0.3.0",
+    "tree-format>=0.1.2",
+]
+[project.scripts]
+tn-gpt = "main:main"

@@ -4,7 +4,7 @@ import re
 import os
 from streamlit_mermaid import st_mermaid
 import random
-
+from back.generate import generate_answer
 # Configuration de l'URL du backend
 API_URL = "http://127.0.0.1:8000/chat"
 
@@ -132,7 +132,7 @@ def apply_dhda_design():
 apply_dhda_design()
 #st.image("./logo_DHDA.png", width=250)
 current_dir = os.path.dirname(os.path.abspath(__file__))
-image_path = os.path.join(current_dir, "static", "ducky_cassis.png")
+image_path = os.path.join(current_dir, "front", "static", "ducky_cassis.png")
 st.image(image_path, width=200)
 st.title("Bonjour, je suis TN-GPT")
 messages = [
@@ -157,9 +157,9 @@ st.write("### " + "".join(random.choices(quotes, weights =  proba_messages, k=1)
 with st.sidebar:
     col1, col2 = st.columns(2)
     with col1:
-        st.image(os.path.join(current_dir, "static", "logo_ceten.png"), width=200)
+        st.image(os.path.join(current_dir,"front", "static", "logo_ceten.png"), width=200)
     with col2:
-        st.image(os.path.join(current_dir, "static", "logo_neuratn.png"), width=65)
+        st.image(os.path.join(current_dir,"front", "static", "logo_neuratn.png"), width=65)
     st.markdown("### Je sers à plein de choses")
     st.write("""
     - Retrouvez des infos du drive 1A
@@ -196,33 +196,16 @@ if prompt := st.chat_input("Donne 5 raisons de se gooner en public (urgent)"):
     with st.chat_message("assistant"):
         with st.spinner(f"Attends, je réfléchis à ta question de golmon"):
             try:
-                # Ajout du profil dans la requête
-                payload = {
-                    "question": prompt, 
-                    "thread_id": "streamlit_session"
-                }
+                raw_response = generate_answer(prompt, top_k=3)
+        
+                # Le reste reste pareil
+                text_content, mermaid_code = split_response(raw_response)
+                st.markdown(text_content)
                 
-                response = requests.post(API_URL, json=payload)
+                if mermaid_code:
+                    st_mermaid(mermaid_code, height=350)
                 
-                if response.status_code == 200:
-                    data = response.json()
-                    raw_response = data.get("response", "Erreur: QI détecté en-dessous du premier quartile")
-                    
-                    # 1. On sépare le texte du graphique
-                    text_content, mermaid_code = split_response(raw_response)
-                    
-                    # 2. On affiche le texte
-                    st.markdown(text_content)
-                    
-                    # 3. On affiche le diagramme si présent
-                    if mermaid_code:
-                        st_mermaid(mermaid_code, height=350)
-                    
-                    st.session_state.messages.append({"role": "assistant", "content": raw_response})
-                else:
-                    st.error(f"Erreur API ({response.status_code}) : {response.text}")
+                st.session_state.messages.append({"role": "assistant", "content": raw_response})
             
-            except requests.exceptions.ConnectionError:
-                st.error("Impossible de se connecter au backend sur le port 8000.")
             except Exception as e:
                 st.error(f"Erreur : {str(e)}")
