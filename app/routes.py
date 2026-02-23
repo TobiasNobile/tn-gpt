@@ -1,4 +1,4 @@
-from flask import Blueprint, request, jsonify, session
+from flask import Blueprint, request, jsonify, session, render_templates
 from back.generate import generate_answer
 import random
 
@@ -63,3 +63,7 @@ def quote():
     quotes = [c[0] for c in CITATIONS]
     weights = [c[1] for c in CITATIONS]
     return jsonify({"quote": random.choices(quotes, weights=weights, k=1)[0]})
+
+@bp.route("/")
+def index():
+    return render_template("index.html")
