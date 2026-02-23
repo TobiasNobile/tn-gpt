@@ -1,9 +1,10 @@
-import sys
-import streamlit.web.cli as stcli
+from flask import Flask
+from app.routes import bp
 
-def main():
-    sys.argv = ["streamlit", "run", "app/chat.py", "--server.port=8501"]
-    sys.exit(stcli.main())
+app = Flask(__name__, template_folder="app/front/templates", static_folder="app/front/static")
+app.secret_key = "change-moi-en-prod"
+
+app.register_blueprint(bp)
 
 if __name__ == "__main__":
-    main()
+    app.run(debug=True, port=8501)
