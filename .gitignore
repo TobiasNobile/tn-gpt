@@ -1,8 +1,29 @@
-.venv
-./app/.env
+# Environnements virtuels
+venv/
+.venv/
+env/
+lib/
+bin/
+include/
+pyvenv.cfg
+share/
+
+# uv
+.uv/
+
+# ChromaDB (base de données locale)
+chroma_db/
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.Python
+
+# OS
 .DS_Store
-*/__pycache__
-*/back/__pycache__
-chroma_db/*
-data/*
-.python-version
+
+# IDE
+.vscode/
+.idea/
